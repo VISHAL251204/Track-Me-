@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<title>FORGE — Personal Fitness System</title>
+<title>Track Me — Personal Fitness System</title>
 <meta name="theme-color" content="#12141A">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="FORGE">
+<meta name="apple-mobile-web-app-title" content="Track Me">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
@@ -33,66 +33,86 @@
     --danger:#FF5C7A;
     --radius:16px;
   }
-  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none;}
+  html,body{height:100%; overscroll-behavior-y:none;}
   body{
     background:var(--bg);
     color:var(--text);
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
-    padding-bottom:88px;
+    padding-bottom:calc(88px + env(safe-area-inset-bottom));
     overflow-x:hidden;
+    user-select:none;
+    -webkit-user-select:none;
   }
+  input,textarea{user-select:text; -webkit-user-select:text;}
   h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
   .mono{font-family:'JetBrains Mono',monospace;}
-  button{font-family:inherit; cursor:pointer; border:none;}
-  input,select,textarea{font-family:inherit; background:var(--surface-2); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; width:100%;}
+  button{font-family:inherit; cursor:pointer; border:none; transition:transform .1s ease, opacity .1s ease;}
+  button:active{transform:scale(.95); opacity:.85;}
+  a{text-decoration:none;}
+  input,select,textarea{font-family:inherit; background:var(--surface-2); color:var(--text); border:1px solid var(--border); border-radius:12px; padding:13px 14px; font-size:15px; width:100%; appearance:none; -webkit-appearance:none;}
   input:focus,select:focus,textarea:focus{outline:2px solid var(--progress); outline-offset:1px;}
+  select{
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B90A0' stroke-width='2.5'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:16px; padding-right:36px;
+  }
   ::-webkit-scrollbar{display:none;}
+
+  /* ---- Splash ---- */
+  #splash{position:fixed; inset:0; background:var(--bg); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .4s ease, visibility .4s ease;}
+  #splash.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  #splash .splash-mark{width:64px; height:64px; border-radius:20px; background:var(--train-dim); display:flex; align-items:center; justify-content:center; animation:pulseMark 1.1s ease-in-out infinite;}
+  #splash .splash-mark svg{width:32px; height:32px;}
+  #splash .splash-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; letter-spacing:.02em;}
+  @keyframes pulseMark{0%,100%{transform:scale(1); opacity:1;} 50%{transform:scale(1.08); opacity:.85;}}
+
+  /* ---- Page transition ---- */
+  main{padding:0 20px 20px; animation:viewIn .28s cubic-bezier(.2,.8,.3,1);}
+  @keyframes viewIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
 
   /* ---- App shell ---- */
   #app{max-width:520px; margin:0 auto; min-height:100vh; position:relative;}
   header.topbar{
-    padding:22px 20px 14px;
+    padding:calc(18px + env(safe-area-inset-top)) 20px 14px;
     position:sticky; top:0; z-index:10;
-    background:linear-gradient(var(--bg) 80%, transparent);
+    background:linear-gradient(var(--bg) 75%, transparent);
   }
   header.topbar .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600;}
   header.topbar h1{font-size:26px; font-weight:700; margin-top:2px;}
-  main{padding:0 20px 20px;}
 
   /* ---- Bottom nav ---- */
   nav.tabbar{
     position:fixed; bottom:0; left:0; right:0; z-index:20;
-    background:rgba(27,30,39,.92); backdrop-filter:blur(14px);
+    background:rgba(20,22,29,.85); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
     border-top:1px solid var(--border);
     display:flex; justify-content:space-around;
-    padding:10px 6px calc(10px + env(safe-area-inset-bottom));
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
     max-width:520px; margin:0 auto;
   }
   nav.tabbar button{
-    background:none; display:flex; flex-direction:column; align-items:center; gap:4px;
-    color:var(--muted); font-size:10.5px; font-weight:600; letter-spacing:.02em;
-    padding:4px 8px; border-radius:10px; flex:1;
+    background:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.02em;
+    padding:7px 6px 5px; border-radius:14px; flex:1;
   }
-  nav.tabbar button svg{width:21px; height:21px;}
-  nav.tabbar button.active{color:var(--text);}
-  nav.tabbar button.active svg{color:var(--active-color, var(--progress));}
+  nav.tabbar button svg{width:21px; height:21px; transition:transform .18s ease;}
+  nav.tabbar button.active{color:var(--text); background:var(--surface-2);}
+  nav.tabbar button.active svg{color:var(--active-color, var(--progress)); transform:translateY(-1px);}
 
   /* ---- Cards ---- */
-  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:14px;}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:14px; box-shadow:0 8px 24px -12px rgba(0,0,0,.5);}
   .card-title{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
   .row{display:flex; justify-content:space-between; align-items:center;}
   .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
   .grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
   .pill{display:inline-block; padding:4px 10px; border-radius:99px; font-size:11px; font-weight:600; letter-spacing:.02em;}
-  .btn{padding:13px 18px; border-radius:12px; font-weight:600; font-size:14.5px; text-align:center; display:inline-flex; align-items:center; justify-content:center; gap:8px;}
-  .btn-primary{background:var(--train); color:#1A0F09; width:100%;}
+  .btn{padding:14px 18px; border-radius:14px; font-weight:600; font-size:14.5px; text-align:center; display:inline-flex; align-items:center; justify-content:center; gap:8px;}
+  .btn-primary{background:var(--train); color:#1A0F09; width:100%; box-shadow:0 8px 20px -8px rgba(255,122,69,.55);}
   .btn-ghost{background:var(--surface-2); color:var(--text); border:1px solid var(--border);}
-  .btn-sm{padding:8px 12px; font-size:12.5px; border-radius:10px;}
+  .btn-sm{padding:9px 13px; font-size:12.5px; border-radius:11px;}
   .btn-block{width:100%;}
   .quick-actions{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
-  .quick-actions button{background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:12px 4px; display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--text); font-size:11px; font-weight:600;}
+  .quick-actions button{background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:14px 4px; display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--text); font-size:11px; font-weight:600;}
   .quick-actions button svg{width:18px;height:18px;}
 
   /* Rings */
@@ -115,14 +135,16 @@
   .list-item:last-child{border-bottom:none;}
   .badge{font-size:10.5px; background:var(--surface-2); color:var(--muted); padding:3px 8px; border-radius:6px; font-weight:600;}
 
-  .tag-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;}
-  .tag{padding:7px 13px; border-radius:99px; background:var(--surface-2); color:var(--muted); font-size:12.5px; font-weight:600; border:1px solid var(--border);}
+  .tag-row{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px;}
+  .tag{padding:9px 15px; border-radius:99px; background:var(--surface-2); color:var(--muted); font-size:12.5px; font-weight:600; border:1px solid var(--border);}
   .tag.active{background:var(--text); color:var(--bg); border-color:var(--text);}
 
   .search-box{position:relative; margin-bottom:14px;}
 
-  .modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:50; display:flex; align-items:flex-end;}
-  .modal{background:var(--surface); width:100%; max-width:520px; margin:0 auto; border-radius:22px 22px 0 0; padding:22px 20px calc(22px + env(safe-area-inset-bottom)); max-height:85vh; overflow-y:auto;}
+  .modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:50; display:flex; align-items:flex-end; animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+  .modal{background:var(--surface); width:100%; max-width:520px; margin:0 auto; border-radius:26px 26px 0 0; padding:14px 20px calc(22px + env(safe-area-inset-bottom)); max-height:88vh; overflow-y:auto; box-shadow:0 -20px 50px -20px rgba(0,0,0,.6); animation:sheetUp .3s cubic-bezier(.2,.9,.3,1);}
+  @keyframes sheetUp{from{transform:translateY(30px); opacity:.5;} to{transform:translateY(0); opacity:1;}}
   .modal-handle{width:36px; height:4px; background:var(--border); border-radius:99px; margin:0 auto 16px;}
   .field{margin-bottom:14px;}
   .field label{display:block; font-size:12.5px; color:var(--muted); font-weight:600; margin-bottom:6px;}
@@ -130,13 +152,13 @@
 
   .exercise-row{display:flex; gap:12px; align-items:center; padding:13px 0; border-bottom:1px solid var(--border);}
   .exercise-row:last-child{border-bottom:none;}
-  .ex-icon{width:42px; height:42px; border-radius:10px; background:var(--train-dim); color:var(--train); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0;}
+  .ex-icon{width:44px; height:44px; border-radius:13px; background:var(--train-dim); color:var(--train); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;}
   .ex-icon.yoga{background:var(--yoga-dim); color:var(--yoga);}
   .ex-meta{flex:1; min-width:0;}
   .ex-meta .name{font-weight:600; font-size:14.5px;}
   .ex-meta .sub{font-size:12px; color:var(--muted); margin-top:2px;}
 
-  .video-btn{display:flex; align-items:center; gap:6px; color:var(--progress); font-size:12.5px; font-weight:600; background:var(--progress-dim); padding:8px 12px; border-radius:10px; white-space:nowrap;}
+  .video-btn{display:flex; align-items:center; gap:6px; color:var(--progress); font-size:12.5px; font-weight:600; background:var(--progress-dim); padding:9px 13px; border-radius:12px; white-space:nowrap;}
 
   .set-row{display:grid; grid-template-columns:28px 1fr 1fr 1fr 24px; gap:8px; align-items:center; margin-bottom:8px;}
   .set-row input{padding:9px 8px; text-align:center;}
@@ -156,13 +178,19 @@
 </style>
 </head>
 <body>
+<div id="splash">
+  <div class="splash-mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF7A45" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2.5-7L13 19l2.5-7H22"/></svg>
+  </div>
+  <div class="splash-name">Track Me</div>
+</div>
 <div id="app"></div>
 <div id="toast" class="toast"></div>
 <div id="modal-root"></div>
 
 <script>
 /* =========================================================
-   FORGE — personal fitness tracker
+   Track Me — personal fitness tracker
    Storage: window.storage (personal, non-shared) with
    graceful in-memory fallback if unavailable.
    ========================================================= */
@@ -353,9 +381,17 @@ async function boot(){
   State.waterLogs = await Store.get('water-logs', []);
   State.yogaLogs = await Store.get('yoga-logs', []);
   render();
+  const minSplashTime = new Promise(r=>setTimeout(r, 550));
+  await minSplashTime;
+  const splash = document.getElementById('splash');
+  if(splash) splash.classList.add('hide');
 }
 
-function switchTab(tab){ State.tab = tab; render(); window.scrollTo(0,0); }
+function switchTab(tab){
+  if(tab===State.tab) return;
+  State.tab = tab; render(); window.scrollTo(0,0);
+  if(navigator.vibrate) navigator.vibrate(8);
+}
 
 function render(){
   const app = document.getElementById('app');
@@ -969,7 +1005,7 @@ function renderOnboarding(){
   return `
   <div style="padding:60px 24px 24px">
     <div class="eyebrow" style="color:var(--muted);letter-spacing:.14em;font-size:12px;font-weight:600;text-transform:uppercase">Welcome to</div>
-    <h1 style="font-size:34px;margin:6px 0 8px">FORGE</h1>
+    <h1 style="font-size:34px;margin:6px 0 8px">Track Me</h1>
     <p class="muted" style="margin-bottom:28px">Your personal training, nutrition & recovery system. Set up your profile to get accurate calorie and macro targets.</p>
     <div id="onboarding-form"></div>
   </div>`;
@@ -977,61 +1013,68 @@ function renderOnboarding(){
 function attachOnboardingEvents(){ renderOnboardingModal(null); }
 function renderOnboardingModal(existing){
   const p = existing || {};
+  window.__ob = window.__ob && window.__obIsEdit === !!existing ? window.__ob : {
+    name:p.name||'', age:p.age||'', gender:p.gender||'male', height:p.height||'',
+    weight:p.weight||'', targetWeight:p.targetWeight||'', goal:p.goal||'muscle', activity:p.activity||'moderate'
+  };
+  window.__obIsEdit = !!existing;
   const el = existing ? document.getElementById('modal-root') : document.getElementById('onboarding-form');
   const wrapOpen = existing ? `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modal-handle"></div>` : `<div class="card">`;
   const wrapClose = existing ? `</div></div>` : `</div>`;
-  el.innerHTML = `${wrapOpen}
-    <div class="field"><label>Name</label><input id="ob-name" value="${p.name||''}" placeholder="Your name"></div>
-    <div class="field-row">
-      <div class="field" style="flex:1"><label>Age</label><input id="ob-age" type="number" value="${p.age||''}" placeholder="21"></div>
-      <div class="field" style="flex:1"><label>Gender</label>
-        <select id="ob-gender">
-          <option value="male" ${p.gender==='male'?'selected':''}>Male</option>
-          <option value="female" ${p.gender==='female'?'selected':''}>Female</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field" style="flex:1"><label>Height (cm)</label><input id="ob-height" type="number" value="${p.height||''}" placeholder="170"></div>
-      <div class="field" style="flex:1"><label>Weight (kg)</label><input id="ob-weight" type="number" step="0.1" value="${p.weight||''}" placeholder="65"></div>
-    </div>
-    <div class="field"><label>Target weight (kg)</label><input id="ob-target" type="number" step="0.1" value="${p.targetWeight||''}" placeholder="70"></div>
-    <div class="field"><label>Primary goal</label>
-      <select id="ob-goal">
-        <option value="muscle" ${p.goal==='muscle'?'selected':''}>Build Muscle</option>
-        <option value="fatloss" ${p.goal==='fatloss'?'selected':''}>Fat Loss</option>
-        <option value="recomp" ${p.goal==='recomp'?'selected':''}>Body Recomposition</option>
-        <option value="maintain" ${p.goal==='maintain'?'selected':''}>Maintain & Perform</option>
-      </select>
-    </div>
-    <div class="field"><label>Activity level</label>
-      <select id="ob-activity">
-        <option value="sedentary" ${p.activity==='sedentary'?'selected':''}>Sedentary (desk job, little exercise)</option>
-        <option value="light" ${p.activity==='light'?'selected':''}>Light (1-3 workouts/week)</option>
-        <option value="moderate" ${(!p.activity||p.activity==='moderate')?'selected':''}>Moderate (3-5 workouts/week)</option>
-        <option value="active" ${p.activity==='active'?'selected':''}>Active (6-7 workouts/week)</option>
-        <option value="veryActive" ${p.activity==='veryActive'?'selected':''}>Very Active (physical job + training)</option>
-      </select>
-    </div>
+  el.innerHTML = `${wrapOpen}<div id="ob-form-inner"></div>
     <button class="btn btn-primary btn-block" style="margin-top:8px" onclick="saveOnboarding(${existing?'true':'false'})">${existing?'Save Changes':'Start Tracking →'}</button>
     ${existing?`<button class="btn btn-ghost btn-block" style="margin-top:10px" onclick="closeModal()">Cancel</button>`:''}
   ${wrapClose}`;
+  renderObInner();
 }
+function renderObInner(){
+  const o = window.__ob;
+  document.getElementById('ob-form-inner').innerHTML = `
+    <div class="field"><label>Name</label><input id="ob-name" value="${o.name}" placeholder="Your name" oninput="window.__ob.name=this.value"></div>
+    <div class="field-row">
+      <div class="field" style="flex:1"><label>Age</label><input id="ob-age" type="number" value="${o.age}" placeholder="21" oninput="window.__ob.age=this.value"></div>
+      <div class="field" style="flex:1">
+        <label>Gender</label>
+        <div class="tag-row" style="margin-bottom:0">
+          ${['male','female'].map(g=>`<button type="button" class="tag ${o.gender===g?'active':''}" style="flex:1" onclick="setObField('gender','${g}')">${g==='male'?'Male':'Female'}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field" style="flex:1"><label>Height (cm)</label><input id="ob-height" type="number" value="${o.height}" placeholder="170" oninput="window.__ob.height=this.value"></div>
+      <div class="field" style="flex:1"><label>Weight (kg)</label><input id="ob-weight" type="number" step="0.1" value="${o.weight}" placeholder="65" oninput="window.__ob.weight=this.value"></div>
+    </div>
+    <div class="field"><label>Target weight (kg)</label><input id="ob-target" type="number" step="0.1" value="${o.targetWeight}" placeholder="70" oninput="window.__ob.targetWeight=this.value"></div>
+    <div class="field"><label>Primary goal</label>
+      <div class="tag-row">
+        ${[['muscle','Build Muscle'],['fatloss','Fat Loss'],['recomp','Recomposition'],['maintain','Maintain']].map(([v,l])=>`<button type="button" class="tag ${o.goal===v?'active':''}" onclick="setObField('goal','${v}')">${l}</button>`).join('')}
+      </div>
+    </div>
+    <div class="field"><label>Activity level</label>
+      <div class="tag-row" style="flex-direction:column; align-items:stretch;">
+        ${[['sedentary','Sedentary — desk job, little exercise'],['light','Light — 1-3 workouts/week'],['moderate','Moderate — 3-5 workouts/week'],['active','Active — 6-7 workouts/week'],['veryActive','Very Active — physical job + training']].map(([v,l])=>`<button type="button" class="tag ${o.activity===v?'active':''}" style="text-align:left; width:100%; margin-bottom:6px" onclick="setObField('activity','${v}')">${l}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+function setObField(field, value){ window.__ob[field]=value; renderObInner(); }
 async function saveOnboarding(isEdit){
+  const o = window.__ob;
   const profile = {
-    name: document.getElementById('ob-name').value || 'Athlete',
-    age: parseInt(document.getElementById('ob-age').value)||25,
-    gender: document.getElementById('ob-gender').value,
-    height: parseFloat(document.getElementById('ob-height').value)||170,
-    weight: parseFloat(document.getElementById('ob-weight').value)||65,
-    targetWeight: parseFloat(document.getElementById('ob-target').value)||null,
-    goal: document.getElementById('ob-goal').value,
-    activity: document.getElementById('ob-activity').value,
+    name: o.name || 'Athlete',
+    age: parseInt(o.age)||25,
+    gender: o.gender,
+    height: parseFloat(o.height)||170,
+    weight: parseFloat(o.weight)||65,
+    targetWeight: parseFloat(o.targetWeight)||null,
+    goal: o.goal,
+    activity: o.activity,
   };
   State.profile = profile;
   await Store.set('profile', profile);
+  window.__ob = null;
   if(isEdit) closeModal();
-  toast(isEdit?'Profile updated':'Welcome to FORGE 💪');
+  toast(isEdit?'Profile updated':'Welcome to Track Me 💪');
   State.tab='today';
   render();
 }

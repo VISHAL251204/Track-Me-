@@ -1,6 +1,6 @@
 {
-  "name": "FORGE — Personal Fitness System",
-  "short_name": "FORGE",
+  "name": "Track Me — Personal Fitness System",
+  "short_name": "Track Me",
   "description": "Personal training, nutrition, and recovery tracker",
   "start_url": "./index.html",
   "scope": "./",
